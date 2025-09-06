@@ -1,0 +1,80 @@
+# Agent Scaffolder – generates YAML configs for new agents
+log:
+  stdout_log_level: INFO
+  log_file_level: DEBUG
+  log_file: agent-scaffolder.log
+
+# Pull in anchors like *broker_connection, *general_model, *default_session_service
+# as shown in the official docs’ examples.
+# Adjust the relative path if your layout differs.
+!include ../shared_config.yaml
+
+apps:
+  - name: agent_scaffolder
+    app_module: solace_agent_mesh.agent.sac.app
+
+    broker:
+      <<: *broker_connection
+
+    app_config:
+      namespace: "${NAMESPACE}"
+      agent_name: "Agent_Scaffolder"
+      display_name: "Agent Scaffolder"
+      supports_streaming: true
+
+      # Model selection; *general_model usually defined in shared_config.yaml
+      model: *general_model
+
+      instruction: |
+        You are an internal scaffolding agent. When asked, you produce a valid
+        Solace Agent Mesh agent YAML file using the supplied fields (name,
+        display_name, instruction, tools, etc.) and write it into
+        configs/agents/<name>.yaml. Ensure that every field is using only letters and optionally "_". 
+        Validate inputs and include an agent_card
+        with skills matching the tool functions. Return a short summary with the
+        file path and a preview of the YAML you generated.
+        You should also provide the avaliable tools in src/<name>/tools.py and their implementation. ALWAYS PROVIDE TOOLS WHEN DECLARED.
+
+      # Tools exposed by this agent
+      tools:
+        - tool_type: python
+          component_module: "src.agent_scaffolder.tools"
+          component_base_path: .
+          function_name: "define_dynamic_tools"
+          tool_description: "Generate and write a new agent YAML to configs/agents/"
+          tool_config:
+            # Default template options; callers can override via function args
+            default_namespace: "${NAMESPACE}"
+            default_model_anchor: "*general_model"
+            default_include_shared: "../shared_config.yaml"
+
+        # (Optional) include built-in artifact tools, useful if you also want to save
+        # previews as files; kept minimal here.
+        - tool_type: builtin-group
+          group_name: "artifact_management"
+
+      # (Optional) services and behavior toggles, aligned with the tutorial layout
+      session_service: *default_session_service
+      artifact_service: *default_artifact_service
+      artifact_handling_mode: "reference"
+      enable_embed_resolution: true
+      enable_artifact_content_instruction: true
+
+      # Agent Card for discovery
+      agent_card:
+        description: "Scaffolds new agents by generating valid YAML configs on demand."
+        defaultInputModes: ["text"]
+        defaultOutputModes: ["text", "file"]
+        skills:
+          - id: "define_dynamic_tools"
+            name: "Generate Agent YAML"
+            description: "Create a new agent YAML config and write it to configs/agents/ and generate the tools.py file"
+
+      # Discovery/IPC controls (keep conservative; adjust to your mesh policy)
+      agent_card_publishing:
+        interval_seconds: 30
+      agent_discovery:
+        enabled: true
+      inter_agent_communication:
+        allow_list: []
+        request_timeout_seconds: 30
