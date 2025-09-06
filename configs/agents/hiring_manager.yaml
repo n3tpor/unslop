@@ -1,0 +1,55 @@
+# Solace Agent Mesh Agent Configuration
+
+log:
+  stdout_log_level: INFO
+  log_file_level: DEBUG
+  log_file: a2a_agent.log
+
+!include ../shared_config.yaml
+
+apps:
+  - name: "HiringAgent__app"
+    app_base_path: .
+    app_module: solace_agent_mesh.agent.sac.app
+    broker:
+      <<: *broker_connection
+
+    app_config:
+      namespace: "${NAMESPACE}"
+      supports_streaming: true
+      agent_name: "HiringAgent"
+      display_name: "Hiring Agent"
+      model: *general_model
+
+      instruction: |
+        You are an agent designed to use tool calls to create other agents with the right skills required to do a given task.
+
+      tools:
+        - group_name: artifact_management
+          tool_type: builtin-group
+
+      session_service: *default_session_service
+      artifact_service: *default_artifact_service
+
+      artifact_handling_mode: "reference"
+      enable_embed_resolution: true
+      enable_artifact_content_instruction: true
+      data_tools_config: *default_data_tools_config
+
+      # Agent Card Definition
+      agent_card:
+        description: |
+          A helpful AI assistant.
+        defaultInputModes: [text]
+        defaultOutputModes: [text, file]
+        skills: []
+
+      # Discovery & Communication
+      agent_card_publishing:
+        interval_seconds: 10
+      agent_discovery:
+        enabled: true
+      inter_agent_communication:
+        allow_list: ["*"]
+        deny_list: []
+        request_timeout_seconds: 600
