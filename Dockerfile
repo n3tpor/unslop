@@ -19,7 +19,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install solace-agent-mesh and verify installation
-RUN pip3 install solace-agent-mesh && sam -v
+RUN pip3 install solace-agent-mesh 
+RUN sam -v
 
 # Set working directory
 WORKDIR /root
