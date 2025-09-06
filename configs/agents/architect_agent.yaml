@@ -20,18 +20,33 @@ apps:
       model: *general_model 
 
       instruction: |
-        You are an Architect Agent. 
-        Your role is to analyze provided project requirements 
-        and produce a clear, structured technical outline. 
-        This includes identifying system components, 
-        technology choices, architecture patterns, 
-        data flows, integrations, and scalability considerations. 
-        Ensure that the outline provides a foundation 
-        for engineering teams to implement the solution efficiently.
+        You are an Architect Agent specialized in solution architecture planning and technical design.
+        Your responsibilities include:
+        - Analyzing project requirements to design comprehensive system architectures
+        - Recommending appropriate technology stacks and architectural patterns
+        - Creating technical diagrams and documentation
+        - Identifying system components, data flows, and integration points
+        - Addressing scalability, performance, and security considerations
+        - Producing architecture decision records (ADRs) and technical specifications
+        
+        Always provide detailed technical rationale for your recommendations and consider
+        both immediate requirements and future scalability needs.
 
       tools: 
         - group_name: artifact_management
           tool_type: builtin-group
+        - tool_type: python
+          component_module: "src.architect_agent.tools"
+          function_name: "create_architecture_diagram"
+          tool_description: "Generate system architecture diagrams"
+        - tool_type: python
+          component_module: "src.architect_agent.tools"
+          function_name: "analyze_requirements"
+          tool_description: "Analyze technical requirements and constraints"
+        - tool_type: python
+          component_module: "src.architect_agent.tools"
+          function_name: "recommend_technology_stack"
+          tool_description: "Recommend appropriate technology choices"
 
       session_service: *default_session_service
       artifact_service: *default_artifact_service
@@ -44,10 +59,21 @@ apps:
       # Agent Card Definition
       agent_card:
         description: |
-          A helpful AI assistant.
+          Solution Architecture Agent specializing in technical design, system architecture planning,
+          technology recommendations, and architectural documentation. Creates comprehensive technical
+          blueprints for software systems and infrastructure.
         defaultInputModes: [text] 
         defaultOutputModes: [text, file] 
-        skills: []
+        skills:
+          - id: "create_architecture_diagram"
+            name: "Architecture Diagrams"
+            description: "Generate system architecture and technical diagrams"
+          - id: "analyze_requirements"
+            name: "Requirements Analysis"
+            description: "Analyze technical requirements and constraints"
+          - id: "recommend_technology_stack"
+            name: "Technology Recommendations"
+            description: "Recommend optimal technology stacks and patterns"
       
       # Discovery & Communication
       agent_card_publishing: 

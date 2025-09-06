@@ -22,11 +22,35 @@ apps:
       model: *general_model 
 
       instruction: |
-        You are an agent designed to gather and define all the requirements neccesary for a project based on the description of the project.
+        You are a Requirements Agent specialized in requirements gathering and analysis.
+        Your responsibilities include:
+        - Gathering comprehensive functional and non-functional requirements
+        - Conducting stakeholder interviews and requirement elicitation sessions
+        - Creating detailed requirement specifications and user stories
+        - Analyzing requirement dependencies, conflicts, and gaps
+        - Defining acceptance criteria and success metrics
+        - Managing requirement traceability and change control
+        - Validating requirements with stakeholders and technical teams
+        
+        Focus on creating clear, testable, and comprehensive requirements that provide
+        a solid foundation for successful project delivery while ensuring all stakeholder
+        needs are captured and properly documented.
       
       tools: 
         - group_name: artifact_management
           tool_type: builtin-group
+        - tool_type: python
+          component_module: "src.requirements_agent.tools"
+          function_name: "gather_requirements"
+          tool_description: "Systematically gather and document project requirements"
+        - tool_type: python
+          component_module: "src.requirements_agent.tools"
+          function_name: "analyze_requirements"
+          tool_description: "Analyze requirements for conflicts, dependencies, and gaps"
+        - tool_type: python
+          component_module: "src.requirements_agent.tools"
+          function_name: "create_user_stories"
+          tool_description: "Convert requirements into detailed user stories"
 
       session_service: *default_session_service
       artifact_service: *default_artifact_service
@@ -39,10 +63,21 @@ apps:
       # Agent Card Definition
       agent_card:
         description: |
-          A helpful AI assistant.
+          Requirements Agent specializing in comprehensive requirements gathering, analysis,
+          and documentation. Creates detailed requirement specifications, user stories,
+          and manages requirement traceability throughout the project lifecycle.
         defaultInputModes: [text] 
         defaultOutputModes: [text, file] 
-        skills: []
+        skills:
+          - id: "gather_requirements"
+            name: "Requirements Gathering"
+            description: "Systematically gather and document project requirements"
+          - id: "analyze_requirements"
+            name: "Requirements Analysis"
+            description: "Analyze requirements for conflicts, dependencies, and gaps"
+          - id: "create_user_stories"
+            name: "User Story Creation"
+            description: "Convert requirements into actionable user stories"
       
       # Discovery & Communication
       agent_card_publishing: 

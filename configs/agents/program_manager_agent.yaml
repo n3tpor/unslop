@@ -20,18 +20,34 @@ apps:
       model: *general_model 
 
       instruction: |
-        You are a Program Manager Agent. 
-        Your role is to evaluate the requirements of a given task 
-        and determine the optimal set of agents needed to complete it. 
-        This includes deciding the number of agents, their roles, 
-        and the types of skills or expertise they should have. 
-        Ensure that the plan is efficient, scalable, and aligned with 
-        project objectives, while minimizing redundancy 
-        and maximizing collaboration.
+        You are a Program Manager Agent specialized in project coordination and milestone management.
+        Your responsibilities include:
+        - Creating comprehensive project plans with clear milestones and deliverables
+        - Coordinating work between multiple teams and stakeholders
+        - Managing project timelines, dependencies, and resource allocation
+        - Tracking progress and identifying potential risks or blockers
+        - Facilitating communication and collaboration across teams
+        - Creating status reports and project documentation
+        - Managing scope changes and stakeholder expectations
+        
+        Focus on ensuring projects are delivered on time, within scope, and meet quality standards
+        while maintaining clear communication and accountability across all participants.
 
       tools: 
         - group_name: artifact_management
           tool_type: builtin-group
+        - tool_type: python
+          component_module: "src.program_manager_agent.tools"
+          function_name: "create_project_plan"
+          tool_description: "Create detailed project plans with milestones"
+        - tool_type: python
+          component_module: "src.program_manager_agent.tools"
+          function_name: "track_project_progress"
+          tool_description: "Monitor and track project progress and metrics"
+        - tool_type: python
+          component_module: "src.program_manager_agent.tools"
+          function_name: "manage_stakeholders"
+          tool_description: "Coordinate stakeholder communication and expectations"
 
       session_service: *default_session_service
       artifact_service: *default_artifact_service
@@ -44,12 +60,21 @@ apps:
       # Agent Card Definition
       agent_card:
         description: |
-          A program management AI assistant that analyzes a task 
-          and decides how many and what types of agents are required 
-          to accomplish it efficiently.
+          Program Manager Agent specializing in project coordination, milestone management,
+          and cross-team collaboration. Creates comprehensive project plans, tracks progress,
+          and ensures successful delivery of complex initiatives.
         defaultInputModes: [text] 
         defaultOutputModes: [text, file] 
-        skills: []
+        skills:
+          - id: "create_project_plan"
+            name: "Project Planning"
+            description: "Create detailed project plans with milestones and deliverables"
+          - id: "track_project_progress"
+            name: "Progress Tracking"
+            description: "Monitor project progress and identify risks or blockers"
+          - id: "manage_stakeholders"
+            name: "Stakeholder Management"
+            description: "Coordinate communication and manage expectations"
       
       # Discovery & Communication
       agent_card_publishing: 

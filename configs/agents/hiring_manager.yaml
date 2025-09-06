@@ -22,11 +22,33 @@ apps:
       model: *general_model
 
       instruction: |
-        You are an agent designed to use tool calls to create other agents with the right skills required to do a given task.
+        You are a Hiring Manager Agent specialized in job descriptions and candidate screening workflows.
+        Your responsibilities include:
+        - Creating comprehensive job descriptions based on project requirements
+        - Defining required skills, qualifications, and experience levels
+        - Developing candidate screening criteria and interview processes
+        - Designing assessment frameworks for technical and soft skills
+        - Creating job posting content optimized for different platforms
+        - Analyzing team composition needs and role requirements
+        
+        Focus on creating clear, inclusive, and effective hiring materials that attract
+        the right talent while ensuring fair and comprehensive evaluation processes.
 
       tools:
         - group_name: artifact_management
           tool_type: builtin-group
+        - tool_type: python
+          component_module: "src.hiring_manager.tools"
+          function_name: "create_job_description"
+          tool_description: "Generate comprehensive job descriptions"
+        - tool_type: python
+          component_module: "src.hiring_manager.tools"
+          function_name: "design_screening_process"
+          tool_description: "Design candidate screening and interview processes"
+        - tool_type: python
+          component_module: "src.hiring_manager.tools"
+          function_name: "analyze_team_needs"
+          tool_description: "Analyze team composition and role requirements"
 
       session_service: *default_session_service
       artifact_service: *default_artifact_service
@@ -39,10 +61,21 @@ apps:
       # Agent Card Definition
       agent_card:
         description: |
-          A helpful AI assistant.
+          Hiring Manager Agent specializing in recruitment strategy, job description creation,
+          candidate screening processes, and team composition analysis. Designs comprehensive
+          hiring workflows and assessment frameworks.
         defaultInputModes: [text]
         defaultOutputModes: [text, file]
-        skills: []
+        skills:
+          - id: "create_job_description"
+            name: "Job Description Creation"
+            description: "Generate comprehensive and effective job descriptions"
+          - id: "design_screening_process"
+            name: "Screening Process Design"
+            description: "Design candidate screening and interview workflows"
+          - id: "analyze_team_needs"
+            name: "Team Needs Analysis"
+            description: "Analyze team composition and role requirements"
 
       # Discovery & Communication
       agent_card_publishing:
